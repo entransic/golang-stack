@@ -157,7 +157,7 @@ func TestPopEmpty(t *testing.T) {
 func TestEmpty(t *testing.T) {
 
 	stack := adt.NewStack()
-	stack.Push("element")
+	stack.Push("Bob")
 	stack.Empty()
 
 	got := stack.Size()
