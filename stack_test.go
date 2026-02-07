@@ -178,7 +178,7 @@ func BenchmarkNewPushPop(b *testing.B) {
 
 	for b.Loop() {
 		stack := adt.NewStack()
-		element := "Element"
+		element := "Bob"
 		_ = stack.Push(element)
 		_, _ = stack.Pop()
 	}
