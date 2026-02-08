@@ -20,6 +20,9 @@ jobs:
         with:
           go-version: "1.25"
 
+      - name: Create Go module cache directory
+        run: mkdir -p /home/runner/go/pkg/mod
+
       - name: Build
         run: go build -v ./...
 
