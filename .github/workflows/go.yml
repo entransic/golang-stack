@@ -28,13 +28,6 @@ jobs:
       - name: Build
         run: go build -v ./...
 
-  test:
-    needs: build
-    runs-in: ubuntu-latest
-
-      steps:
-      - uses: actions/checkout@v4
-
       - name: Test
         run: go test -v ./...
 
