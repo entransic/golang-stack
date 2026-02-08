@@ -29,8 +29,10 @@ jobs:
         run: go build -v ./...
 
   test:
-    runs-on: ubuntu-latest
-    steps:
+    needs: build
+    runs-in: ubuntu-latest
+
+      steps:
       - uses: actions/checkout@v4
 
       - name: Test
