@@ -2,23 +2,23 @@ package stack
 
 import "errors"
 
-type Stack struct {
+type Stack[T any] struct {
 	size   int
-	values []string
+	values []T
 }
 
-func NewStack() *Stack {
-	return &Stack{0, make([]string, 5)}
+func (s *Stack[T]) NewStack() *Stack[T] {
+	return &Stack[T]{0, make([]T, 5)}
 }
 
-func (s *Stack) IsEmpty() bool {
+func (s *Stack[T]) IsEmpty() bool {
 	if s.size == 0 {
 		return true
 	}
 	return false
 }
 
-func (s *Stack) Push(elem string) error {
+func (s *Stack[T]) Push(elem T) error {
 	ss := s.Size()
 	if ss == 4 {
 		return errors.New("Stack full")
@@ -28,18 +28,18 @@ func (s *Stack) Push(elem string) error {
 	return nil
 }
 
-func (s *Stack) Size() int {
+func (s *Stack[T]) Size() int {
 	return s.size
 }
 
-func (s *Stack) Empty() {
+func (s *Stack[T]) Empty() {
 	s.size = 0
 	s.values = s.values[:0]
 }
 
-func (s *Stack) Pop() (string, error) {
+func (s *Stack[T]) Pop() (T, error) {
 	if s.Size() == 0 {
-		return "", errors.New("Poping empty stack")
+		return s.NewStack().values[0], errors.New("Popping empty stack")
 	}
 	popped := s.values[int(s.size)]
 	s.values = s.values[:len(s.values)-1]

@@ -1,6 +1,7 @@
 package stack_test
 
 import (
+	"math"
 	"testing"
 	"unicode/utf8"
 
@@ -9,8 +10,9 @@ import (
 
 func TestIsEmpty(t *testing.T) {
 
-	stack := adt.NewStack()
-	got := stack.IsEmpty()
+	stack := &adt.Stack[string]{}
+	new := stack.NewStack()
+	got := new.IsEmpty()
 	want := true
 
 	if got != want {
@@ -23,7 +25,8 @@ func TestNotEmpty(t *testing.T) {
 
 	elem := "Bob"
 
-	stack := adt.NewStack()
+	new := &adt.Stack[string]{}
+	stack := new.NewStack()
 	_ = stack.Push(elem)
 	got := stack.IsEmpty()
 	want := false
@@ -34,7 +37,8 @@ func TestNotEmpty(t *testing.T) {
 }
 
 func TestStackSizeZero(t *testing.T) {
-	stack := adt.NewStack()
+	new := &adt.Stack[string]{}
+	stack := new.NewStack()
 	got := stack.Size()
 	want := 0
 	if got != want {
@@ -44,7 +48,8 @@ func TestStackSizeZero(t *testing.T) {
 
 func TestStackSizeOne(t *testing.T) {
 	elem := "Bob"
-	stack := adt.NewStack()
+	new := &adt.Stack[string]{}
+	stack := new.NewStack()
 	stack.Push(elem)
 	got := stack.Size()
 	want := 1
@@ -59,7 +64,8 @@ func TestStackSizeThree(t *testing.T) {
 	elem2 := "The"
 	elem3 := "Fish"
 
-	stack := adt.NewStack()
+	new := &adt.Stack[string]{}
+	stack := new.NewStack()
 	stack.Push(elem1)
 	stack.Push(elem2)
 	stack.Push(elem3)
@@ -74,7 +80,8 @@ func TestStackSizeThree(t *testing.T) {
 
 func TestPopOne(t *testing.T) {
 	elem := "Bob"
-	stack := adt.NewStack()
+	new := &adt.Stack[string]{}
+	stack := new.NewStack()
 	stack.Push(elem)
 	got, _ := stack.Pop()
 	want := elem
@@ -94,7 +101,8 @@ func TestPushThreePopThree(t *testing.T) {
 	elem2 := "The"
 	elem3 := "Fish"
 
-	stack := adt.NewStack()
+	new := &adt.Stack[string]{}
+	stack := new.NewStack()
 	stack.Push(elem1)
 	stack.Push(elem2)
 	stack.Push(elem3)
@@ -126,7 +134,8 @@ func TestStackFull(t *testing.T) {
 
 	elem := "Bob"
 
-	stack := adt.NewStack()
+	new := &adt.Stack[string]{}
+	stack := new.NewStack()
 
 	for range 4 {
 		_ = stack.Push(elem)
@@ -141,7 +150,9 @@ func TestStackFull(t *testing.T) {
 }
 
 func TestPopEmpty(t *testing.T) {
-	stack := adt.NewStack()
+	new := &adt.Stack[string]{}
+	stack := new.NewStack()
+
 	got, err := stack.Pop()
 	want := ""
 
@@ -156,7 +167,9 @@ func TestPopEmpty(t *testing.T) {
 
 func TestEmpty(t *testing.T) {
 
-	stack := adt.NewStack()
+	new := &adt.Stack[string]{}
+	stack := new.NewStack()
+
 	stack.Push("Bob")
 	stack.Empty()
 
@@ -174,10 +187,63 @@ func TestEmpty(t *testing.T) {
 	}
 }
 
+func TestIntegerStack(t *testing.T) {
+
+	new := &adt.Stack[int]{}
+	stack := new.NewStack()
+	want := 5
+
+	stack.Push(want)
+	got, err := stack.Pop()
+
+	if err != nil {
+		t.Error("error received")
+	}
+	if got != want {
+		t.Errorf("got %d, want %d", got, want)
+	}
+
+}
+
+func TestFloat32Stack(t *testing.T) {
+	new := &adt.Stack[float32]{}
+	stack := new.NewStack()
+	var want float32 = math.Pi
+
+	stack.Push(want)
+	got, err := stack.Pop()
+
+	if err != nil {
+		t.Error("error received")
+	}
+	if got != want {
+		t.Errorf("got %f, want %f", got, want)
+	}
+}
+
+func TestFloat64Stack(t *testing.T) {
+	new := &adt.Stack[float64]{}
+	stack := new.NewStack()
+	var want float64 = math.Pi
+
+	stack.Push(want)
+	got, err := stack.Pop()
+
+	if err != nil {
+		t.Error("error received")
+	}
+	if got != want {
+		t.Errorf("got %f, want %f", got, want)
+	}
+}
+
+// BENACHMARK TESTS
+
 func BenchmarkNewPushPop(b *testing.B) {
 
 	for b.Loop() {
-		stack := adt.NewStack()
+		new := &adt.Stack[string]{}
+		stack := new.NewStack()
 		element := "Bob"
 		_ = stack.Push(element)
 		_, _ = stack.Pop()
@@ -187,17 +253,22 @@ func BenchmarkNewPushPop(b *testing.B) {
 func BenchmarkIsEmpty(b *testing.B) {
 
 	for b.Loop() {
-		stack := adt.NewStack()
+		new := &adt.Stack[string]{}
+		stack := new.NewStack()
+
 		stack.IsEmpty()
 	}
 }
 
 func BenchmarkEmpty(b *testing.B) {
 	for b.Loop() {
-		stack := adt.NewStack()
+		new := &adt.Stack[string]{}
+		stack := new.NewStack()
 		stack.Empty()
 	}
 }
+
+// FUZZ TESTS
 
 func FuzzPush(f *testing.F) {
 	testcases := []string{"Element", "", "0", "!@#$%^&*()"}
@@ -205,7 +276,8 @@ func FuzzPush(f *testing.F) {
 		f.Add(tc)
 	}
 	f.Fuzz(func(t *testing.T, s string) {
-		stack := adt.NewStack()
+		new := &adt.Stack[string]{}
+		stack := new.NewStack()
 		got := stack.Push(s)
 		if got != nil {
 			t.Errorf("got an error")
@@ -220,7 +292,8 @@ func FuzzPop(f *testing.F) {
 		f.Add(tc)
 	}
 	f.Fuzz(func(t *testing.T, want string) {
-		stack := adt.NewStack()
+		new := &adt.Stack[string]{}
+		stack := new.NewStack()
 		_ = stack.Push(want)
 		got, _ := stack.Pop()
 
